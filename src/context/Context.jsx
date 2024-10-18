@@ -5,23 +5,47 @@ export const Context=createContext();
 
 const ContextProvider=(props)=>{
 
-    const [input, SetInput]=useState("");
+    const [input, setInput]=useState("");
     const [recentPrompt, setRecentPrompt]=useState("");
-    const [prevPrompts, setPrevPromts]=useState([]);
+    const [prevPrompts, setPrevPrompts]=useState([]);
     const [showResult, setShowResult]=useState(false);
     const [loading, setLoading]=useState(false);
     const [resultData, setResultData]=useState("");
 
 
+    const delayPara=(index, nextWord)=>{
 
-    const onSent=async(prompt)=>{
-        await run(input)
+    }
+
+
+
+
+    const onSent= async (prompt) => {
+
+        setResultData("")
+        setLoading(true)
+        setShowResult(true)
+        setRecentPrompt(input)
+        const response = await run(input)
+        let responseArray=response.split("**");
+        let newResponse;
+        for (let i = 0; i < responseArray.length; i++) {
+            if(i===0|| i%2 !==1){
+                newResponse +=responseArray[i]
+            }else{
+                newResponse+="<b>"+responseArray[i]+"</b>";
+            }
+        }
+        setResultData(newResponse)
+        setLoading(false)
+        setInput("")
+
     };
 
 
     const contextValue={
         prevPrompts,
-        setPrevPromts,
+        setPrevPrompts,
         onSent,
         setRecentPrompt,
         recentPrompt,
@@ -29,7 +53,7 @@ const ContextProvider=(props)=>{
         loading,
         resultData,
         input,
-        SetInput
+        setInput
     }
     return(
         <Context.Provider value={contextValue}>
