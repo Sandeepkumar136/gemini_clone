@@ -14,7 +14,9 @@ const ContextProvider=(props)=>{
 
 
     const delayPara=(index, nextWord)=>{
-
+        setTimeout(function(){
+            setResultData(prev=>prev+nextWord)
+        },75*index)
     }
 
 
@@ -26,6 +28,7 @@ const ContextProvider=(props)=>{
         setLoading(true)
         setShowResult(true)
         setRecentPrompt(input)
+        setPrevPrompts(perv=>[...perv, input])
         const response = await run(input)
         let responseArray=response.split("**");
         let newResponse;
@@ -36,7 +39,17 @@ const ContextProvider=(props)=>{
                 newResponse+="<b>"+responseArray[i]+"</b>";
             }
         }
-        setResultData(newResponse)
+
+        let newResponse2 = newResponse.split("*").join("</br>")
+
+
+        let newResponseArray = newResponse2.split(" ");
+
+        for (let i = 0; i < newResponse2.length; i++) {
+            const nextWord=newResponseArray[i];
+            delayPara(i, nextWord+ " ")
+            
+        }
         setLoading(false)
         setInput("")
 
